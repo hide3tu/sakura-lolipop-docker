@@ -31,13 +31,11 @@ RUN dnf -y install \
     php-pdo \
     php-xml \
     php-zip \
-    php-json \
     php-opcache \
     php-bcmath \
     php-soap \
     php-iconv \
     msmtp \
-    msmtp-mta \
     supervisor \
     && dnf clean all
 
@@ -84,8 +82,9 @@ RUN mkdir -p /etc/httpd/ssl && \
     -subj "/C=JP/ST=Tokyo/L=Tokyo/O=LocalDev/CN=localhost" \
     -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
 
-# SSL VirtualHost設定
-RUN echo '<VirtualHost *:443>' > /etc/httpd/conf.d/ssl-vhost.conf && \
+# SSL VirtualHost設定（Listen 443を含む）
+RUN echo 'Listen 443 https' > /etc/httpd/conf.d/ssl-vhost.conf && \
+    echo '<VirtualHost *:443>' >> /etc/httpd/conf.d/ssl-vhost.conf && \
     echo '    DocumentRoot "/home/user/www"' >> /etc/httpd/conf.d/ssl-vhost.conf && \
     echo '    SSLEngine on' >> /etc/httpd/conf.d/ssl-vhost.conf && \
     echo '    SSLCertificateFile /etc/httpd/ssl/server.crt' >> /etc/httpd/conf.d/ssl-vhost.conf && \
@@ -105,6 +104,12 @@ RUN echo '<VirtualHost *:443>' > /etc/httpd/conf.d/ssl-vhost.conf && \
 # Apache実行ユーザー変更
 RUN sed -i 's|User apache|User user|g' /etc/httpd/conf/httpd.conf && \
     sed -i 's|Group apache|Group user|g' /etc/httpd/conf/httpd.conf
+
+# デフォルトのssl.confとphp.confを削除（自分の設定を使用）
+RUN rm -f /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/php.conf
+
+# PHP-FPM用ディレクトリ作成
+RUN mkdir -p /run/php-fpm && chown user:user /run/php-fpm
 
 # PHP-FPM設定
 RUN sed -i 's|user = apache|user = user|g' /etc/php-fpm.d/www.conf && \
