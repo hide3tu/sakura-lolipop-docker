@@ -24,8 +24,10 @@ Claude Codeでの自立型開発を想定し、パス構造を統一していま
 ## ディレクトリ構成
 
 ```
-docker/
+./
 ├── docker-compose.yml
+├── README.md
+├── .gitignore
 ├── sakura/
 │   └── Dockerfile
 ├── lolipop/
@@ -34,10 +36,10 @@ docker/
 │   └── my.cnf
 └── projects/
     ├── sakura/
-    │   ├── www/      ← ここにPHPファイルを置く
+    │   ├── www/
     │   └── log/
     └── lolipop/
-        ├── www/      ← ここにPHPファイルを置く
+        ├── www/
         └── log/
 ```
 
