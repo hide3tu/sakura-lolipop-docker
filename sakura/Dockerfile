@@ -112,9 +112,11 @@ RUN rm -f /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/php.conf
 RUN mkdir -p /run/php-fpm && chown user:user /run/php-fpm
 
 # PHP-FPM設定
+# clear_env = no: Docker環境変数をPHP-FPMワーカーに渡す（DB接続情報など）
 RUN sed -i 's|user = apache|user = user|g' /etc/php-fpm.d/www.conf && \
     sed -i 's|group = apache|group = user|g' /etc/php-fpm.d/www.conf && \
-    sed -i 's|listen = /run/php-fpm/www.sock|listen = 127.0.0.1:9000|g' /etc/php-fpm.d/www.conf
+    sed -i 's|listen = /run/php-fpm/www.sock|listen = 127.0.0.1:9000|g' /etc/php-fpm.d/www.conf && \
+    sed -i 's|;clear_env = no|clear_env = no|g' /etc/php-fpm.d/www.conf
 
 # PHP設定（レンタルサーバー風）
 RUN echo "date.timezone = Asia/Tokyo" >> /etc/php.ini && \

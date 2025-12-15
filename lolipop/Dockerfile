@@ -106,9 +106,11 @@ RUN echo '<VirtualHost *:443>' > /etc/apache2/sites-available/default-ssl.conf &
     a2ensite default-ssl
 
 # PHP-FPM設定（ポート9000でリッスン）
+# clear_env = no: Docker環境変数をPHP-FPMワーカーに渡す（DB接続情報など）
 RUN sed -i 's|listen = /run/php/php8.3-fpm.sock|listen = 127.0.0.1:9000|g' /etc/php/8.3/fpm/pool.d/www.conf && \
     sed -i 's|user = www-data|user = user|g' /etc/php/8.3/fpm/pool.d/www.conf && \
-    sed -i 's|group = www-data|group = user|g' /etc/php/8.3/fpm/pool.d/www.conf
+    sed -i 's|group = www-data|group = user|g' /etc/php/8.3/fpm/pool.d/www.conf && \
+    sed -i 's|;clear_env = no|clear_env = no|g' /etc/php/8.3/fpm/pool.d/www.conf
 
 # PHP設定（レンタルサーバー風）
 RUN echo "date.timezone = Asia/Tokyo" >> /etc/php/8.3/fpm/php.ini && \
